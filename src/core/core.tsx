@@ -14,8 +14,19 @@ export function randomConfiguration(cells: number = 500, size: number = 150): Co
 
 // Réalise un tour de configuration (génération de la prochaine configuration à partir d'une configuration donnée)
 export function doTurn(configuration: Configuration): Configuration {
-  const voisins: Configuration = removeDuplicates(configuration.map(getVoisins).flat())
-  return voisins.map(voisin => (processCell(configuration, voisin, checkIfVoisinExist(configuration, voisin))) ? ({ x: voisin.x, y: voisin.y }) : null).filter(Boolean) as Configuration
+  const actualGeneration: Configuration = removeDuplicates(getNeighborsOfEachCell(configuration));
+  const nextGeneration: Configuration = actualGeneration.map(cell => (getCoordsForNextGen(configuration, cell))).filter(Boolean) as Configuration
+  console.log(nextGeneration);
+
+  return nextGeneration;
+}
+
+export const getNeighborsOfEachCell = (configuration: Configuration): Configuration => {
+  return configuration.map(getVoisins).flat()
+}
+
+export const getCoordsForNextGen = (configuration: Configuration, cell: Cell) => {
+  return processCell(configuration, cell, checkIfVoisinExist(configuration, cell)) ? ({ x: cell.x, y: cell.y }) : null;
 }
 
 // Vérifie si une cellule (vivante ou non) pourra vivre sur la prochaine configuration
